@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
 const jobSchema = z.object({
@@ -12,15 +12,17 @@ const jobSchema = z.object({
   status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
 });
 
-// ✅ UPDATE JOB
+// UPDATE JOB
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
+
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user?.email) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -28,7 +30,7 @@ export async function PUT(
     const data = jobSchema.parse(body);
 
     const updatedJob = await prisma.job.update({
-      where: { id: params.id },
+      where: { id },
       data,
     });
 
@@ -36,33 +38,38 @@ export async function PUT(
   } catch (error: any) {
     console.error("PUT ERROR:", error);
 
-    if (error.errors) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
-    }
-
-    return NextResponse.json({ error: "Failed to update job" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Failed to update job" },
+      { status: 500 }
+    );
   }
 }
 
-// ✅ DELETE JOB
+// DELETE JOB
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
+
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user?.email) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await prisma.job.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("DELETE ERROR:", error);
-    return NextResponse.json({ error: "Failed to delete job" }, { status: 500 });
+
+    return NextResponse.json(
+      { error: error.message || "Failed to delete job" },
+      { status: 500 }
+    );
   }
 }

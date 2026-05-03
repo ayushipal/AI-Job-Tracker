@@ -1,51 +1,60 @@
+import type { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { prisma } from "./prisma";
+import prisma from "@/lib/prisma";
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: "credentials",
       credentials: {
-        email: {},
-        password: {}
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing credentials");
-        }
 
-        // ✅ find user
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email },
         });
 
-        if (!user) {
-          throw new Error("No user found");
-        }
+        if (!user || !user.password) return null;
 
-        // ✅ compare password
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
 
-        if (!isValid) {
-          throw new Error("Invalid password");
-        }
+        if (!isValid) return null;
 
-        // ✅ IMPORTANT: must return user
         return {
           id: user.id,
-          email: user.email
+          email: user.email,
         };
-      }
-    })
+      },
+    }),
   ],
+
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
-  pages: {
-    signIn: "/"
-  }
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.email = token.email as string;
+        (session.user as any).id = token.id;
+      }
+      return session;
+    },
+  },
 };
