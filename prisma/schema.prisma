@@ -1,0 +1,18 @@
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+  jobs  Job[]
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  company     String
+  description String?
+  url         String?
+  status      String
+  createdAt   DateTime @default(now())
+
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+}
