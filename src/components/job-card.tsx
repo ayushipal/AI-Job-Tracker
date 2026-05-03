@@ -40,7 +40,7 @@ export function JobCard({ job, onDelete, onRefresh }: JobCardProps) {
     }
   };
 
-  // ✅ UPDATE STATUS (IMPORTANT FIX)
+  // UPDATE STATUS (IMPORTANT FIX)
   const handleUpdateStatus = async () => {
     try {
       const newStatus = prompt(
@@ -77,11 +77,11 @@ export function JobCard({ job, onDelete, onRefresh }: JobCardProps) {
   const statusConfig = getStatusConfig(job.status);
 
   return (
-    <Card className="overflow-hidden transition-all duration-300 border-0 shadow-xl group bg-white/80 backdrop-blur-sm hover:-translate-y-2 hover:bg-white hover:shadow-2xl">
+    <Card className="group overflow-hidden border-0 bg-white/80 shadow-xl backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:bg-white hover:shadow-2xl">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <CardTitle className="mb-2 text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-indigo-600">
+            <CardTitle className="mb-2 line-clamp-1 text-xl font-bold text-gray-900 group-hover:text-indigo-600">
               {job.title}
             </CardTitle>
 
@@ -89,20 +89,20 @@ export function JobCard({ job, onDelete, onRefresh }: JobCardProps) {
               {job.company}
             </CardDescription>
 
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <Badge className="px-4 py-2 font-bold text-blue-800 bg-blue-100">
+            <div className="mb-4 flex flex-wrap items-center gap-3">
+              <Badge className="bg-blue-100 px-4 py-2 font-bold text-blue-800">
                 {statusConfig.label}
               </Badge>
 
               {job.location && (
                 <div className="flex items-center gap-1 text-sm text-gray-600">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="h-4 w-4" />
                   {job.location}
                 </div>
               )}
 
               <div className="flex items-center gap-1 text-sm text-gray-500">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="h-4 w-4" />
                 {new Date(job.createdAt).toLocaleDateString()}
               </div>
             </div>
@@ -112,15 +112,15 @@ export function JobCard({ job, onDelete, onRefresh }: JobCardProps) {
 
       <CardContent className="pt-0 pb-6">
         {job.description && (
-          <p className="mb-6 text-gray-600 line-clamp-4">
+          <p className="mb-6 line-clamp-4 text-gray-600">
             {job.description}
           </p>
         )}
 
         {job.url && (
-          <Button variant="outline" size="sm" asChild className="w-full mb-3">
+          <Button variant="outline" size="sm" asChild className="mb-3 w-full">
             <a href={job.url} target="_blank">
-              <ExternalLink className="w-4 h-4 mr-2" />
+              <ExternalLink className="mr-2 h-4 w-4" />
               View Application
             </a>
           </Button>
@@ -128,14 +128,14 @@ export function JobCard({ job, onDelete, onRefresh }: JobCardProps) {
 
         <div className="flex gap-3 pt-2 opacity-0 group-hover:opacity-100">
           
-          {/* ✅ EDIT BUTTON NOW WORKS */}
+          {/* EDIT BUTTON NOW WORKS */}
           <Button
             variant="outline"
             size="sm"
             className="flex-1"
             onClick={handleUpdateStatus}
           >
-            <Edit className="w-4 h-4 mr-2" />
+            <Edit className="mr-2 h-4 w-4" />
             Edit
           </Button>
 
@@ -145,12 +145,12 @@ export function JobCard({ job, onDelete, onRefresh }: JobCardProps) {
             className="flex-1"
             onClick={handleDelete}
           >
-            <Trash2 className="w-4 h-4 mr-2" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Delete
           </Button>
 
           <Button size="sm" className="flex-1">
-            <Brain className="w-4 h-4 mr-2" />
+            <Brain className="mr-2 h-4 w-4" />
             AI Analyze
           </Button>
         </div>

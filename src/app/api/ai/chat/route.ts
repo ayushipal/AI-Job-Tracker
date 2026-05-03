@@ -5,24 +5,23 @@ export async function POST(req: NextRequest) {
     const { messages } = await req.json();
     const userMessage = messages[messages.length - 1]?.content || 'Hello';
 
-    // 🎯 SMART MOCK AI RESPONSES
     let response = '';
     
     if (userMessage.toLowerCase().includes('analyze') || userMessage.toLowerCase().includes('job')) {
-      response = `🎯 **Job Analysis Report**
+      response = ` **Job Analysis Report**
 
 **Match Score: 87%** ⭐⭐⭐⭐
 
-✅ **Your Strengths:**
+**Your Strengths:**
 - Next.js 16 + React expertise
 - Fullstack development skills  
 - TypeScript proficiency
 
-❌ **Gaps to Fill:**
+ **Gaps to Fill:**
 - Add Docker/Kubernetes experience
 - Learn advanced Prisma queries
 
-🎯 **Next Steps:**
+ **Next Steps:**
 1. Update resume with metrics
 2. Practice LeetCode medium
 3. Apply to 3 more roles today

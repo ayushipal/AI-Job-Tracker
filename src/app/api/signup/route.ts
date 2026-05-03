@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log("✅ New user created:", user.id);
+    console.log(" New user created:", user.id);
 
     return NextResponse.json({ 
       success: true, 

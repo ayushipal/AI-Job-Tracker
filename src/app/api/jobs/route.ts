@@ -12,7 +12,7 @@ const jobSchema = z.object({
   status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
 });
 
-// ✅ GET JOBS (USER SPECIFIC)
+// GET JOBS (USER SPECIFIC)
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -42,7 +42,7 @@ export async function GET() {
   }
 }
 
-// ✅ CREATE JOB
+// CREATE JOB
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
