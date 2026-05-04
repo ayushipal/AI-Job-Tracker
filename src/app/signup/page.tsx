@@ -15,6 +15,9 @@ export default function SignupPage() {
 
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ email, password }),
     })
 
@@ -22,9 +25,10 @@ export default function SignupPage() {
 
     if (!res.ok) {
       setError(data.error)
-    } else {
-      router.push('/login')
+      return
     }
+
+    router.push('/login')
   }
 
   return (
