@@ -7,6 +7,7 @@ export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
+
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
@@ -38,23 +39,5 @@ export const authOptions: AuthOptions = {
 
   session: {
     strategy: "jwt",
-  },
-
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-      }
-      return token;
-    },
-
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.email = token.email as string;
-        (session.user as any).id = token.id;
-      }
-      return session;
-    },
   },
 };
