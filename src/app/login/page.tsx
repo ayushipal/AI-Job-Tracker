@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { signIn } from "next-auth/react";
+import { signIn } from 'next-auth/react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -10,27 +10,37 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleLogin = async (e: any) => {
-    e.preventDefault();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
     setLoading(true)
+    setError('')
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+    try {
+      const res = await signIn('credentials', {
+        redirect: false, // we handle redirect manually
+        email,
+        password,
+      })
 
-    console.log("LOGIN RESPONSE:", res);
+      console.log('LOGIN RESPONSE:', res)
 
-    if (res?.ok) {
-      router.push("/dashboard");
-    } else {
-      alert("Invalid credentials");
+      // ❌ If error → show message
+      if (res?.error) {
+        setError('Invalid email or password')
+        setLoading(false)
+        return
+      }
+
+      // ✅ Success → redirect
+      router.push('/dashboard')
+      router.refresh() // 🔥 ensures session is updated
+    } catch (err) {
+      setError('Something went wrong')
+      setLoading(false)
     }
-
-    setLoading(false)
-  };
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600">
@@ -42,7 +52,9 @@ export default function LoginPage() {
           Login
         </h2>
 
+        {/* Email */}
         <input
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -50,26 +62,35 @@ export default function LoginPage() {
           required
         />
 
+        {/* Password */}
         <input
-          placeholder="Password"
           type="password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-3 mb-4 border rounded"
           required
         />
 
+        {/* Button */}
         <button
           type="submit"
+          disabled={loading}
           className="w-full p-3 text-white bg-indigo-600 rounded"
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
 
+        {/* Error */}
+        {error && (
+          <p className="mt-3 text-center text-red-500">{error}</p>
+        )}
+
+        {/* Redirect to signup */}
         <p className="mt-4 text-center">
           New user?{' '}
           <span
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/signup')}
             className="text-indigo-600 cursor-pointer"
           >
             Register
