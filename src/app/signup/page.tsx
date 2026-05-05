@@ -13,7 +13,7 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await fetch('/api/auth/signup', {   // ✅ correct API
+    const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,30 +31,32 @@ export default function SignupPage() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Signup</h1>
+    <div className="flex h-screen items-center justify-center">
+      <form onSubmit={handleSignup} className="space-y-4 rounded-lg border p-6">
+        <h1 className="text-2xl font-bold">Signup</h1>
 
-      <form onSubmit={handleSignup}>
         <input
+          className="w-full border p-2"
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <br /><br />
 
         <input
+          className="w-full border p-2"
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <br /><br />
 
-        <button type="submit">Signup</button>
+        <button className="w-full bg-black px-4 py-2 text-white">
+          Signup
+        </button>
+
+        {error && <p className="text-red-500">{error}</p>}
       </form>
-
-      {error && <p>{error}</p>}
     </div>
   )
 }

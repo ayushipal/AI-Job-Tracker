@@ -5,16 +5,41 @@ import { useState } from 'react'
 
 export default function RegisterPage() {
   const router = useRouter()
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleRegister = async (e: any) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
-    // fake register (you can connect DB later)
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // 🔥 REQUIRED
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Something went wrong')
+        setLoading(false)
+        return
+      }
+
+      
       router.push('/login')
-    }, 1000)
+    } catch (err) {
+      setError('Network error')
+    }
+
+    setLoading(false)
   }
 
   return (
@@ -29,6 +54,8 @@ export default function RegisterPage() {
 
         <input
           placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full p-3 mb-4 border rounded"
           required
         />
@@ -36,6 +63,8 @@ export default function RegisterPage() {
         <input
           placeholder="Password"
           type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full p-3 mb-4 border rounded"
           required
         />
@@ -46,6 +75,10 @@ export default function RegisterPage() {
         >
           {loading ? 'Creating...' : 'Register'}
         </button>
+
+        {error && (
+          <p className="mt-2 text-center text-red-500">{error}</p>
+        )}
 
         <p className="mt-4 text-center">
           Already have an account?{' '}
