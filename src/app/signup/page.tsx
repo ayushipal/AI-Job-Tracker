@@ -13,7 +13,7 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await fetch('/api/auth/signup', {
+    const res = await fetch('/api/auth/signup', {   // ✅ correct API
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -25,10 +25,9 @@ export default function SignupPage() {
 
     if (!res.ok) {
       setError(data.error)
-      return
+    } else {
+      router.push('/login')
     }
-
-    router.push('/login')
   }
 
   return (
