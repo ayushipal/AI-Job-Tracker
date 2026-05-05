@@ -17,81 +17,75 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    try {
-      const res = await signIn('credentials', {
-        redirect: false, // we handle redirect manually
-        email,
-        password,
-      })
+    const res = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+      callbackUrl: '/dashboard', // 🔥 IMPORTANT
+    })
 
-      console.log('LOGIN RESPONSE:', res)
+    console.log('LOGIN RESPONSE:', res)
 
-      // ❌ If error → show message
-      if (res?.error) {
-        setError('Invalid email or password')
-        setLoading(false)
-        return
-      }
-
-      // ✅ Success → redirect
-      router.push('/dashboard')
-      router.refresh() // 🔥 ensures session is updated
-    } catch (err) {
-      setError('Something went wrong')
+    if (res?.error) {
+      setError('Invalid email or password')
       setLoading(false)
+      return
     }
+
+    // ✅ redirect using returned URL
+    if (res?.url) {
+      router.push(res.url)
+      router.refresh()
+    }
+
+    setLoading(false)
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
       <form
         onSubmit={handleLogin}
-        className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl"
+        className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl"
       >
-        <h2 className="mb-6 text-2xl font-bold text-center">
+        <h2 className="mb-6 text-center text-2xl font-bold">
           Login
         </h2>
 
-        {/* Email */}
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 border rounded"
+          className="mb-4 w-full rounded border p-3"
           required
         />
 
-        {/* Password */}
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-4 border rounded"
+          className="mb-4 w-full rounded border p-3"
           required
         />
 
-        {/* Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full p-3 text-white bg-indigo-600 rounded"
+          className="w-full rounded bg-indigo-600 p-3 text-white"
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
 
-        {/* Error */}
         {error && (
           <p className="mt-3 text-center text-red-500">{error}</p>
         )}
 
-        {/* Redirect to signup */}
         <p className="mt-4 text-center">
           New user?{' '}
           <span
             onClick={() => router.push('/signup')}
-            className="text-indigo-600 cursor-pointer"
+            className="cursor-pointer text-indigo-600"
           >
             Register
           </span>
