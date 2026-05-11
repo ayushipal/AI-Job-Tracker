@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "AI Job Tracker - Professional Job Application Manager",
   description: "Track job applications with AI insights and analytics",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

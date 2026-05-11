@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server"
-import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import prisma from "@/lib/prisma"
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json()
+    const body = await req.json()
+
+    const { email, password } = body
+
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email and password required" },
+        { status: 400 }
+      )
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -26,10 +35,15 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json({ user })
-  } catch (error: any) {
+    return NextResponse.json({
+      message: "User created",
+      user,
+    })
+  } catch (error) {
+    console.log(error)
+
     return NextResponse.json(
-      { error: error.message },
+      { error: "Something went wrong" },
       { status: 500 }
     )
   }

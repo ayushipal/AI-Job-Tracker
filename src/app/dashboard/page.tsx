@@ -46,15 +46,14 @@ const statusConfig = {
 export default function Dashboard() {
     const router = useRouter()
 
-const { data: session, status } = useSession();
+const { data: session, status } = useSession()
 
 useEffect(() => {
-  if (status === "loading") return;
-
-  if (!session) {
-    router.push("/");
+  if (status === "unauthenticated") {
+    router.push("/login")
   }
-}, [session, status, router]);
+}, [status, router])
+
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [formLoading, setFormLoading] = useState(false)
@@ -136,9 +135,9 @@ useEffect(() => {
     }
   }
 
-  const logout = () => {
-  signOut({ callbackUrl: "/" });
-};
+  const logout = async () => {
+  await signOut({ callbackUrl: "/login" })
+}
 
   // NEW: Navigation Functions
   const goToMainPage = () => {
@@ -178,7 +177,15 @@ useEffect(() => {
       </div>
     )
   }
+if (status === "loading") {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      Loading...
+    </div>
+  )
+}
 
+if (!session) return null
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50">
       {/* ENHANCED HEADER - ALL BUTTONS */}

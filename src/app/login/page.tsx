@@ -13,34 +13,32 @@ export default function LoginPage() {
   const [error, setError] = useState('')
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+  e.preventDefault()
+  setLoading(true)
+  setError('')
 
-    const res = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-      callbackUrl: '/dashboard', // 🔥 IMPORTANT
-    })
+  const res = await signIn('credentials', {
+    email,
+    password,
+    redirect: false,
+    callbackUrl: "/dashboard",
+  })
 
-    console.log('LOGIN RESPONSE:', res)
+  console.log("LOGIN RESPONSE:", res)
 
-    if (res?.error) {
-      setError('Invalid email or password')
-      setLoading(false)
-      return
-    }
-
-    // ✅ redirect using returned URL
-    if (res?.url) {
-      router.push(res.url)
-      router.refresh()
-    }
-
+  if (res?.error) {
+    setError(res.error || "Login failed")
     setLoading(false)
+    return
   }
 
+  
+  if (res?.url) {
+    router.push(res.url)
+  }
+
+  setLoading(false)
+}
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
       <form

@@ -31,9 +31,9 @@ export async function GET() {
     }
 
     const jobs = await prisma.job.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
-    });
+  where: { userId: user.id },
+  orderBy: { appliedDate: "desc" },
+});
 
     return NextResponse.json(jobs);
   } catch (error) {
