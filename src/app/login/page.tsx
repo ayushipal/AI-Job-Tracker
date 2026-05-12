@@ -13,39 +13,38 @@ export default function LoginPage() {
   const [error, setError] = useState('')
 
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setLoading(true)
-  setError('')
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
-  const res = await signIn('credentials', {
-    email,
-    password,
-    redirect: false,
-    callbackUrl: "/dashboard",
-  })
+    const res = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
 
-  console.log("LOGIN RESPONSE:", res)
+    console.log("LOGIN RESPONSE:", res)
 
-  if (res?.error) {
-    setError(res.error || "Login failed")
+    if (res?.error) {
+      setError('Invalid email or password')
+      setLoading(false)
+      return
+    }
+
+    if (res?.ok) {
+      router.replace('/dashboard')
+    }
+
     setLoading(false)
-    return
   }
 
-  
-  if (res?.url) {
-    router.push(res.url)
-  }
-
-  setLoading(false)
-}
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600">
       <form
         onSubmit={handleLogin}
-        className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl"
+        className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl"
       >
-        <h2 className="mb-6 text-center text-2xl font-bold">
+        <h2 className="mb-6 text-2xl font-bold text-center">
           Login
         </h2>
 
@@ -54,7 +53,7 @@ export default function LoginPage() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mb-4 w-full rounded border p-3"
+          className="w-full p-3 mb-4 border rounded"
           required
         />
 
@@ -63,27 +62,29 @@ export default function LoginPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mb-4 w-full rounded border p-3"
+          className="w-full p-3 mb-4 border rounded"
           required
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded bg-indigo-600 p-3 text-white"
+          className="w-full p-3 text-white bg-indigo-600 rounded"
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
 
         {error && (
-          <p className="mt-3 text-center text-red-500">{error}</p>
+          <p className="mt-3 text-center text-red-500">
+            {error}
+          </p>
         )}
 
         <p className="mt-4 text-center">
-          New user?{' '}
+          New user?{" "}
           <span
             onClick={() => router.push('/signup')}
-            className="cursor-pointer text-indigo-600"
+            className="text-indigo-600 cursor-pointer"
           >
             Register
           </span>
