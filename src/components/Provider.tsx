@@ -8,7 +8,7 @@ export default function Provider({
   children: React.ReactNode
 }) {
   return (
-    <SessionProvider>
+    <SessionProvider refetchOnWindowFocus={false}>
       {children}
     </SessionProvider>
   )
