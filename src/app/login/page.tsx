@@ -1,21 +1,20 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 
 export default function LoginPage() {
-  const router = useRouter()
+  const [message, setMessage] = useState('')
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  const handleLogin = async (e: React.FormEvent) => {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setLoading(true)
-    setError('')
+    setMessage('Button clicked')
+
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    console.log('Trying login...')
 
     const res = await signIn('credentials', {
       email,
@@ -23,73 +22,38 @@ export default function LoginPage() {
       redirect: false,
     })
 
-    console.log("LOGIN RESPONSE:", res)
+    console.log('LOGIN RESPONSE:', res)
 
-    if (res?.error) {
-      setError('Invalid email or password')
-      setLoading(false)
-      return
-    }
-
-    if (res?.ok) {
-      window.location.href = "/dashboard"
-    }
-
-    setLoading(false)
+    setMessage(JSON.stringify(res))
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600">
-      <form
-        onSubmit={handleLogin}
-        className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl"
-      >
-        <h2 className="mb-6 text-2xl font-bold text-center">
-          Login
-        </h2>
+    <div className="p-10">
+      <h1>Login Test</h1>
 
+      <form onSubmit={handleLogin}>
         <input
-          type="email"
+          name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 border rounded"
-          required
+          className="block p-2 mb-2 border"
         />
 
         <input
+          name="password"
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-4 border rounded"
-          required
+          className="block p-2 mb-2 border"
         />
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full p-3 text-white bg-indigo-600 rounded"
+          className="p-2 text-white bg-blue-500"
         >
-          {loading ? 'Logging in...' : 'Login'}
+          Login
         </button>
-
-        {error && (
-          <p className="mt-3 text-center text-red-500">
-            {error}
-          </p>
-        )}
-
-        <p className="mt-4 text-center">
-          New user?{" "}
-          <span
-            onClick={() => router.push('/signup')}
-            className="text-indigo-600 cursor-pointer"
-          >
-            Register
-          </span>
-        </p>
       </form>
+
+      <p>{message}</p>
     </div>
   )
 }
