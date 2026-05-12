@@ -36,14 +36,14 @@ const handler = NextAuth({
           return null;
         }
 
-        const isValid = await bcrypt.compare(
+        const isPasswordCorrect = await bcrypt.compare(
           credentials.password,
           user.password
         );
 
-        console.log("PASSWORD MATCH:", isValid);
+        console.log("PASSWORD MATCH:", isPasswordCorrect);
 
-        if (!isValid) {
+        if (!isPasswordCorrect) {
           return null;
         }
 

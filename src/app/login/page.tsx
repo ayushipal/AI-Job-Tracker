@@ -32,7 +32,7 @@ export default function LoginPage() {
     }
 
     if (res?.ok) {
-      router.replace('/dashboard')
+      window.location.href = "/dashboard"
     }
 
     setLoading(false)
