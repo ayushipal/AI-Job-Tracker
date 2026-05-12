@@ -53,6 +53,15 @@ useEffect(() => {
     router.push("/login")
   }
 }, [status, router])
+if (status === "loading") {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      Loading...
+    </div>
+  )
+}
+
+if (!session) return null
 
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
@@ -141,7 +150,7 @@ useEffect(() => {
 
   // NEW: Navigation Functions
   const goToMainPage = () => {
-  router.push('/profile')
+  router.push('/')
 }
 
   const goToProfile = () => {
