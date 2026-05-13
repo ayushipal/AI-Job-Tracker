@@ -47,12 +47,29 @@ export default function Dashboard() {
     const router = useRouter()
 
 const { data: session, status } = useSession()
+const [jobs, setJobs] = useState<Job[]>([])
+  const [loading, setLoading] = useState(true)
+  const [formLoading, setFormLoading] = useState(false)
+  const [editingJob, setEditingJob] = useState<Job | null>(null)
+  const [showForm, setShowForm] = useState(false)
+  const [activeTab, setActiveTab] = useState<'all' | 'applied' | 'interview' | 'offer' | 'rejected'>('all')
+  const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<JobForm>({
+    resolver: zodResolver(jobSchema),
+    defaultValues: { status: 'APPLIED' }
+  })
 
 useEffect(() => {
   if (status === "unauthenticated") {
     router.push("/login")
   }
 }, [status, router])
+
+const watchedStatus = watch('status')
+
+useEffect(() => {
+  fetchJobs()
+}, [])
+
 if (status === "loading") {
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -62,25 +79,6 @@ if (status === "loading") {
 }
 
 if (!session) return null
-
-  const [jobs, setJobs] = useState<Job[]>([])
-  const [loading, setLoading] = useState(true)
-  const [formLoading, setFormLoading] = useState(false)
-  const [editingJob, setEditingJob] = useState<Job | null>(null)
-  const [showForm, setShowForm] = useState(false)
-  const [activeTab, setActiveTab] = useState<'all' | 'applied' | 'interview' | 'offer' | 'rejected'>('all')
-
-  const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<JobForm>({
-    resolver: zodResolver(jobSchema),
-    defaultValues: { status: 'APPLIED' }
-  })
-
-  const watchedStatus = watch('status')
-
-  useEffect(() => {
-    fetchJobs()
-  }, [])
-
   const fetchJobs = async () => {
     try {
       setLoading(true)
@@ -145,7 +143,11 @@ if (!session) return null
   }
 
   const logout = async () => {
-  await signOut({ callbackUrl: "/login" })
+  await signOut({
+    redirect: false,
+  })
+
+  router.push("/login")
 }
 
   // NEW: Navigation Functions
