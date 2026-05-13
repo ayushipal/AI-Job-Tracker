@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { signOut } from "next-auth/react";
+import { Brain } from 'lucide-react'
 
 import { 
   Briefcase, Building2, FileText, Clock, Plus, Edit3, Trash2,
@@ -65,21 +66,7 @@ useEffect(() => {
 }, [status, router])
 
 const watchedStatus = watch('status')
-
-useEffect(() => {
-  fetchJobs()
-}, [])
-
-if (status === "loading") {
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      Loading...
-    </div>
-  )
-}
-
-if (!session) return null
-  const fetchJobs = async () => {
+const fetchJobs = async () => {
     try {
       setLoading(true)
       const res = await fetch('/api/jobs', { 
@@ -98,6 +85,19 @@ if (!session) return null
       setLoading(false)
     }
   }
+useEffect(() => {
+  fetchJobs()
+}, [])
+
+if (status === "loading") {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      Loading...
+    </div>
+  )
+}
+
+if (!session) return null
 
   const onSubmit = async (data: JobForm) => {
     setFormLoading(true)
@@ -178,6 +178,10 @@ if (!session) return null
     setValue('status', job.status)
   }
 
+  const goToAIChat = () => {
+  router.push('/ai-chat')
+}
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen p-8 bg-gradient-to-br from-indigo-50 to-purple-50">
@@ -221,9 +225,9 @@ if (!session) return null
             <div className="flex items-center space-x-3">
               {/* PROFILE BUTTON */}
               <Button 
-                onClick={goToProfile}
-                className="px-6 text-lg font-bold transition-all duration-300 shadow-xl h-14 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
-              >
+  onClick={goToProfile}
+  className="px-6 text-lg font-bold transition-all duration-300 transform shadow-xl h-14 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 hover:scale-105"
+>
                 <User className="w-5 h-5 mr-2" />
                 Profile
               </Button>
@@ -236,6 +240,13 @@ if (!session) return null
                 <Plus className="w-6 h-6 mr-2" />
                 Track Job
               </Button>
+
+              <Button
+  onClick={goToAIChat}
+  className="px-8 text-lg font-bold transition-all duration-300 transform shadow-xl h-14 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 hover:scale-105"
+>
+  🤖 AI Chat
+</Button>
               
               {/* LOGOUT BUTTON */}
               <Button 

@@ -51,7 +51,20 @@ export default function LoginPage() {
         <p className="mb-8 text-center text-gray-500">
           Login to your AI Job Tracker
         </p>
+         {/* Feature badges */}
+        <div className="flex flex-wrap justify-center gap-2 mb-6 text-xs font-medium">
+          <span className="px-3 py-1 text-indigo-700 bg-indigo-100 rounded-full">
+            AI Resume Analysis
+          </span>
 
+          <span className="px-3 py-1 text-purple-700 bg-purple-100 rounded-full">
+            LinkedIn Tools
+          </span>
+
+          <span className="px-3 py-1 text-pink-700 bg-pink-100 rounded-full">
+            Job Tracking
+          </span>
+        </div>
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-5">
           {/* Email */}
